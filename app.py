@@ -22,8 +22,19 @@ class Movie(db.Model):
     year = db.Column(db.String(4)) # 电影年份
 
 
+@app.context_processor
+def inject_user():
+    ''' 上下文统一注入变量 '''
+    user = User.query.first()
+    return dict(user=user)
+
+
 @app.route('/')
 def index():
-    user = User.query.first()
     movies = Movie.query.all()
-    return render_template('index.html', user = user, movies = movies)
+    return render_template('index.html', movies = movies)
+
+
+@app.errorhandler(404)
+def pag_not_found(e):
+    return render_template('404.html'), 404
